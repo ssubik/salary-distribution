@@ -11,7 +11,7 @@ pragma solidity ^0.8.35;
 // TODO Emergency pause
 contract SalaryStream {
     uint64 immutable MAX_EMPLOYEES = 10;
-    
+
     uint64 immutable ONE_DAY = 1 days;
     uint64 immutable ONE_WEEK = 1 weeks;
     uint64 immutable ONE_MONTH = 30 days;
@@ -22,10 +22,10 @@ contract SalaryStream {
         oneMonth
     }
 
-    mapping (address employee => EmployeeSalaryConfiguration) employeeSalaryConfig;
-    mapping (address employee => EmployeeDetails) employeeDetails;
-    mapping (address employee => uint256) employeeSalary;
-    
+    mapping(address employee => EmployeeSalaryConfiguration) employeeSalaryConfig;
+    mapping(address employee => EmployeeDetails) employeeDetails;
+    mapping(address employee => uint256) employeeSalary;
+
     struct EmployeeSalaryConfiguration {
         uint64 streamTill;
         uint64 lastStreamed;
@@ -39,27 +39,17 @@ contract SalaryStream {
         string position;
     }
 
-    function registerEmployee(
-        EmployeeDetails calldata employee
-    ) external returns (address) {
-
-        address registeredEmployee = address(
-            uint160(
-                uint256(keccak256(
-                    abi.encode(employee)))));
+    function registerEmployee(EmployeeDetails calldata employee) external returns (address) {
+        address registeredEmployee = address(uint160(uint256(keccak256(abi.encode(employee)))));
 
         employeeDetails[registeredEmployee] = employee;
         return registeredEmployee;
     }
-    
-    function configureEmployeeSalary(
-        address employee,
-        uint256 salary,
-        Intervals interval
-    ) external {
+
+    function configureEmployeeSalary(address employee, uint256 salary, Intervals interval) external {
         employeeSalary[employee] = salary;
         EmployeeSalaryConfiguration memory salaryConfig = employeeSalaryConfig[employee];
-        
+
         if (interval == Intervals.oneDay) {
             salaryConfig.interval = ONE_DAY;
         } else if (interval == Intervals.oneWeek) {
@@ -78,7 +68,7 @@ contract SalaryStream {
         require(employees.length <= MAX_EMPLOYEES);
         uint256 employeesLen = employees.length;
 
-        for (uint i; i < employeesLen; ++i) {
+        for (uint256 i; i < employeesLen; ++i) {
             _claimOrStreamSalary(employees[i]);
         }
     }
@@ -87,10 +77,7 @@ contract SalaryStream {
         EmployeeSalaryConfiguration memory salaryConfig = employeeSalaryConfig[employee];
         uint256 salary = employeeSalary[employee];
         uint256 periodToStream = block.timestamp - salaryConfig.lastStreamed;
-        uint256 amountToStream = salary * (
-            periodToStream / 
-            salaryConfig.interval
-        );
+        uint256 amountToStream = salary * (periodToStream / salaryConfig.interval);
 
         // SafeERC20.transfer();
     }
