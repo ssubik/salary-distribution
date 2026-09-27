@@ -15,6 +15,7 @@ unreserved funds can be swept by the owner.
 - Stream cancellation that preserves already vested salary
 - Emergency pause, reentrancy protection, and two-step ownership transfers
 - Foundry tests and GitHub Actions CI
+- Responsive React dashboard for employees and contract owners
 
 ## Requirements
 
@@ -75,3 +76,26 @@ forge script script/DeploySalaryStream.s.sol:DeploySalaryStream \
 
 The deployer and initial owner may be different addresses. Before configuring salaries, approve
 the deployed contract to transfer salary tokens and call `fund`.
+
+## Frontend
+
+The app in `frontend/` connects to any injected EVM wallet and follows the wallet's selected
+network. Copy the example environment file and provide the deployed SalaryStream address:
+
+```shell
+cd frontend
+cp .env.example .env
+# Set VITE_SALARY_STREAM_ADDRESS in .env
+npm install
+npm run dev
+```
+
+The deployment address can also be changed from the settings button in the app. It is saved only
+in the browser's local storage.
+
+### Frontend checks
+
+```shell
+npm run lint
+npm run build
+```
